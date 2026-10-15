@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
 import { usePool } from '../context/PoolContext';
 import { formatCurrency } from '../utils/helpers';
-import { Receipt, CreditCard, CheckCircle2, ShieldCheck, ArrowRight, DollarSign, Wallet, Users, Split } from 'lucide-react';
+import { UpiPaymentModal } from './UpiPaymentModal';
+import {
+  Receipt,
+  CreditCard,
+  CheckCircle2,
+  ShieldCheck,
+  ArrowRight,
+  DollarSign,
+  Wallet,
+  Users,
+  Split,
+  QrCode,
+  Truck,
+  Car,
+  Lock
+} from 'lucide-react';
 
 export const FareSplitCard = ({ pool }) => {
-  const { currency, userProfile, markPaymentSettled, showToast } = usePool();
-  const [selectedMethod, setSelectedMethod] = useState('apple_pay');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const { currency, userProfile, markPaymentSettled, showToast, sendChatMessage } = usePool();
+  const [selectedMethod, setSelectedMethod] = useState('upi');
+  const [showUpiModal, setShowUpiModal] = useState(false);
+  const [isDriverSettled, setIsDriverSettled] = useState(false);
 
   const myMember = pool.currentMembers.find((m) => m.id === userProfile.id);
   const isMyPaymentDone = myMember?.paymentStatus === 'paid';
@@ -17,17 +33,48 @@ export const FareSplitCard = ({ pool }) => {
   const soloFare = pool.soloTaxiFare;
   const savings = Math.max(0, soloFare - perPerson);
 
-  const handleSimulatePayment = () => {
-    setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
+  const paidMembersCount = pool.currentMembers.filter((m) => m.paymentStatus === 'paid').length;
+  const escrowCollectedAmount = paidMembersCount * perPerson;
+  const isEscrowFullyFunded = escrowCollectedAmount >= baseRate;
+
+  const handlePayClick = () => {
+    if (selectedMethod === 'upi') {
+      setShowUpiModal(true);
+    } else {
       markPaymentSettled(pool.id, userProfile.id);
-      showToast(`Payment of ${formatCurrency(perPerson, currency)} processed via ${selectedMethod === 'apple_pay' ? 'Apple Pay' : selectedMethod === 'upi' ? 'UPI' : 'Credit Card'}!`, 'success');
-    }, 900);
+      showToast(
+        `Payment of ${formatCurrency(perPerson, currency)} completed via ${
+          selectedMethod === 'apple_pay' ? 'Apple/GPay' : 'Card'
+        }!`,
+        'success'
+      );
+    }
+  };
+
+  const handleUpiSuccess = (receiptData) => {
+    markPaymentSettled(pool.id, userProfile.id);
+    showToast(`Transferred ₹${perPerson} to 8271665209@ptyes (Ref: ${receiptData.utr.substring(0, 10)})`, 'success');
+    sendChatMessage(
+      pool.id,
+      `✅ Paid my split share (₹${perPerson}) to escrow 8271665209@ptyes. Ref: ${receiptData.utr}`
+    );
+  };
+
+  const handleSettleDriverFare = () => {
+    setIsDriverSettled(true);
+    showToast(
+      `Full fare of ₹${baseRate} disbursed from escrow (8271665209@ptyes) to chauffeur ${pool.driverName.split(' ')[0]}!`,
+      'success'
+    );
+    sendChatMessage(
+      pool.id,
+      `🚕 Chauffeur payout complete! ₹${baseRate} disbursed from escrow to driver ${pool.driverName} (${pool.vehiclePlate}).`
+    );
   };
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200/90 shadow-card p-5 space-y-4">
+      
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div className="flex items-center space-x-2">
@@ -35,20 +82,20 @@ export const FareSplitCard = ({ pool }) => {
             <Receipt className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-navy-900">Transparent Fare Split Breakdown</h4>
+            <h4 className="text-sm font-bold text-navy-900">Fare Split & Escrow Settlement</h4>
             <p className="text-xs text-slate-500">Government Flat Airport Rate ÷ {memberCount} Flyers</p>
           </div>
         </div>
 
         <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-          Save {formatCurrency(savings, currency)} ({(pool.savingsPercent || 60)}%)
+          Save {formatCurrency(savings, currency)} ({pool.savingsPercent || 60}%)
         </span>
       </div>
 
       {/* Calculations table */}
       <div className="space-y-2 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200/70">
         <div className="flex items-center justify-between text-slate-600">
-          <span>Airport Flat Meter Base Fare</span>
+          <span>Airport Meter Base Rate</span>
           <span className="font-semibold text-slate-900">{formatCurrency(pool.soloTaxiFare, currency)}</span>
         </div>
 
@@ -60,12 +107,12 @@ export const FareSplitCard = ({ pool }) => {
         )}
 
         <div className="flex items-center justify-between text-slate-600">
-          <span>Airport Toll & Expressway Surcharge</span>
+          <span>Toll Plaza & Airport Entry Access</span>
           <span className="font-semibold text-emerald-600">Included (₹0 Extra)</span>
         </div>
 
         <div className="pt-2 border-t border-slate-200 flex items-center justify-between font-bold text-slate-800">
-          <span>Total Vehicle Fare</span>
+          <span>Total Driver Payable Fare</span>
           <span className="text-sm">{formatCurrency(baseRate, currency)}</span>
         </div>
 
@@ -82,9 +129,14 @@ export const FareSplitCard = ({ pool }) => {
 
       {/* Passenger Split Status list */}
       <div>
-        <h5 className="text-xs font-bold text-slate-700 mb-2 flex items-center space-x-1">
-          <Users className="w-3.5 h-3.5 text-slate-500" />
-          <span>Co-Passenger Settlement Status</span>
+        <h5 className="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+          <span className="flex items-center space-x-1">
+            <Users className="w-3.5 h-3.5 text-slate-500" />
+            <span>Passenger Settlement Status</span>
+          </span>
+          <span className="text-[10px] text-slate-400 font-mono">
+            {paidMembersCount}/{memberCount} Settled
+          </span>
         </h5>
 
         <div className="space-y-1.5">
@@ -107,13 +159,11 @@ export const FareSplitCard = ({ pool }) => {
                   <span className="font-bold text-slate-700">{formatCurrency(perPerson, currency)}</span>
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center space-x-1 ${
-                      isPaid
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : 'bg-amber-100 text-amber-800'
+                      isPaid ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                     }`}
                   >
                     {isPaid ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : null}
-                    <span>{isPaid ? 'Settled' : 'Pending'}</span>
+                    <span>{isPaid ? 'Escrow Deposited' : 'Pending'}</span>
                   </span>
                 </div>
               </div>
@@ -122,16 +172,68 @@ export const FareSplitCard = ({ pool }) => {
         </div>
       </div>
 
-      {/* Secure Split Settlement for Current Passenger */}
+      {/* Escrow Collection & Cab Chauffeur Settlement Box */}
+      <div className="bg-gradient-to-r from-navy-900 to-sky-950 text-white rounded-xl p-4 space-y-3">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="flex items-center space-x-1.5 text-xs text-sky-300 font-bold uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>AeroPool Escrow Vault</span>
+            </div>
+            <p className="text-[11px] text-slate-300 mt-0.5">
+              Collected at: <strong className="font-mono text-emerald-300">8271665209@ptyes</strong>
+            </p>
+          </div>
+          <div className="text-right">
+            <span className="text-[10px] uppercase font-bold text-slate-400 block">Funds in Vault</span>
+            <span className="text-sm font-black text-emerald-400">
+              ₹{escrowCollectedAmount} / ₹{baseRate}
+            </span>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-navy-800 flex items-center justify-between text-xs">
+          <div>
+            <span className="text-[10px] text-slate-400 block uppercase">Assigned Chauffeur</span>
+            <span className="font-bold text-white">{pool.driverName.split('(')[0]}</span>
+            <span className="text-[10px] text-sky-400 block font-mono">{pool.vehiclePlate}</span>
+          </div>
+
+          <div>
+            {isDriverSettled ? (
+              <span className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 text-xs font-bold flex items-center space-x-1">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Driver Paid ₹{baseRate}</span>
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSettleDriverFare}
+                className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5"
+              >
+                <span>Pay Driver Full Fare (₹{baseRate})</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Pay My Share for Current Passenger */}
       {myMember && (
         <div className="pt-2 border-t border-slate-100 space-y-3">
-          <div className="text-xs font-bold text-slate-700">Choose Split Payment Method:</div>
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-bold text-slate-700">Payment Option:</div>
+            <span className="text-[10px] text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full font-bold">
+              Direct to 8271665209@ptyes
+            </span>
+          </div>
 
           <div className="grid grid-cols-3 gap-2">
             {[
-              { id: 'apple_pay', label: 'Apple / G-Pay', icon: Wallet },
-              { id: 'upi', label: 'Instant UPI', icon: CreditCard },
-              { id: 'card', label: 'Corporate Card', icon: DollarSign },
+              { id: 'upi', label: 'Instant UPI (QR/App)', icon: QrCode },
+              { id: 'apple_pay', label: 'G-Pay / Apple', icon: Wallet },
+              { id: 'card', label: 'Corporate Card', icon: CreditCard }
             ].map((method) => {
               const Icon = method.icon;
               return (
@@ -154,30 +256,37 @@ export const FareSplitCard = ({ pool }) => {
 
           <button
             type="button"
-            disabled={isProcessing}
-            onClick={handleSimulatePayment}
+            onClick={handlePayClick}
             className={`w-full py-3 px-4 rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-2 ${
               isMyPaymentDone
                 ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                 : 'bg-sky-500 hover:bg-sky-600 text-white shadow-sky-500/20'
             }`}
           >
-            {isProcessing ? (
-              <span>Processing secure split...</span>
-            ) : isMyPaymentDone ? (
+            {isMyPaymentDone ? (
               <>
                 <CheckCircle2 className="w-4 h-4 text-white" />
-                <span>Share Paid ({formatCurrency(perPerson, currency)}) — Click to Toggle</span>
+                <span>Share Paid ({formatCurrency(perPerson, currency)}) — Click to Re-verify</span>
               </>
             ) : (
               <>
-                <CreditCard className="w-4 h-4" />
-                <span>Pay My Share ({formatCurrency(perPerson, currency)})</span>
+                <QrCode className="w-4 h-4" />
+                <span>Pay ₹{perPerson} via UPI Escrow (8271665209@ptyes)</span>
               </>
             )}
           </button>
         </div>
       )}
+
+      {/* Interactive UPI Payment Modal */}
+      <UpiPaymentModal
+        isOpen={showUpiModal}
+        onClose={() => setShowUpiModal(false)}
+        pool={pool}
+        perPersonFare={perPerson}
+        onPaymentSuccess={handleUpiSuccess}
+      />
+
     </div>
   );
 };
