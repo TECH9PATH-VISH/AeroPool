@@ -26,13 +26,13 @@ import {
 export const BookRidePage = () => {
   const { searchCriteria, setSearchCriteria, setActiveTab, pools, myActivePoolId, currency } = usePool();
 
-  const [flightNumber, setFlightNumber] = useState(searchCriteria.flightNumber || '6E-2132');
+  const [flightNumber, setFlightNumber] = useState(searchCriteria.flightNumber || '6E-2126');
   const [arrivalDate, setArrivalDate] = useState(searchCriteria.arrivalDate || new Date().toISOString().split('T')[0]);
   const [arrivalTime, setArrivalTime] = useState(searchCriteria.arrivalTime || '19:15');
-  const [terminal, setTerminal] = useState(searchCriteria.terminal || 'T3');
-  const [destinationZone, setDestinationZone] = useState(searchCriteria.destinationZone || 'gurugram_cybercity');
+  const [terminal, setTerminal] = useState(searchCriteria.terminal || 'T1');
+  const [destinationZone, setDestinationZone] = useState(searchCriteria.destinationZone || 'boring_road');
   const [destinationAddress, setDestinationAddress] = useState(
-    searchCriteria.destinationAddress || 'DLF CyberHub (Building 10 / Tower B), DLF Phase 2'
+    searchCriteria.destinationAddress || 'Boring Road Chauraha (Near AN College), Patliputra'
   );
   const [luggageTier, setLuggageTier] = useState(searchCriteria.luggageTier || 'medium_suitcase');
   const [passengerCount, setPassengerCount] = useState(searchCriteria.passengerCount || 1);
@@ -94,7 +94,7 @@ export const BookRidePage = () => {
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-bold tracking-wide uppercase mb-4">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Smart Airport Cab Pooling Engine</span>
+            <span>Smart Airport Cab Pooling Engine • Jay Prakash Narayan Airport (PAT)</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight sm:leading-none">
@@ -258,7 +258,7 @@ export const BookRidePage = () => {
                   value={destinationAddress}
                   onChange={(e) => setDestinationAddress(e.target.value)}
                   onFocus={() => setAddressSuggestions(true)}
-                  placeholder="e.g. DLF CyberHub Tower B, One Horizon Center, or Select CITYWALK"
+                  placeholder="e.g. Boring Road Chauraha, Patna Junction, or AIIMS Gate"
                   className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-3 text-xs sm:text-sm font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-sky-500"
                 />
                 

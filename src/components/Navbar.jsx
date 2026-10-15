@@ -32,11 +32,11 @@ export const Navbar = () => {
                   AeroPool
                 </span>
                 <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-sky-500/20 text-sky-400 border border-sky-400/30 rounded-full">
-                  Airport Rideshare
+                  Patna Airport (PAT)
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block">
-                Incoming Flight Co-Passenger Pool
+                Jay Prakash Narayan Airport Co-Passenger Pool
               </p>
             </div>
           </div>

@@ -66,16 +66,16 @@ export const LiveTrackingPage = () => {
         let newStatus = prev.status;
         let newLocation = prev.locationText;
 
-        const pillarName = pool?.meetingPoint?.split(',')[0] || 'Pillar 14';
+        const pillarName = pool?.meetingPoint?.split(',')[0] || 'Pillar 3';
 
         if (newProgress >= 100 || newDist <= 0.05) {
           newStatus = 'arrived';
-          newLocation = `Arrived at ${pillarName} (Lane 3 Forecourt)`;
+          newLocation = `Arrived at ${pillarName} (Patna Airport Terminal 1 Forecourt)`;
           showToast(`Cab (${pool?.vehiclePlate || 'Airport Taxi'}) has arrived at ${pillarName}!`, 'success');
         } else if (newProgress > 60) {
-          newLocation = 'Turned into Terminal 3 Commercial Cab Lane 3';
+          newLocation = 'Turned into Patna Airport Terminal 1 Commercial Cab Lane';
         } else if (newProgress > 30) {
-          newLocation = 'Passing Airport Centaur Hotel Underpass';
+          newLocation = 'Passing Bihar Flying Club & Airport Road';
         }
 
         return {
@@ -99,7 +99,7 @@ export const LiveTrackingPage = () => {
       etaMinutes: 5,
       progress: 5,
       speedKmH: 32,
-      locationText: 'Airport Perimeter Expressway Loop Road'
+      locationText: 'Shaheed Pir Ali Khan Marg / Airport Perimeter Road'
     });
     showToast('Cab radar simulation reset to 1.8 km.', 'info');
   };
@@ -283,21 +283,21 @@ export const LiveTrackingPage = () => {
                   className="animate-pulse"
                 />
 
-                {/* Terminal 3 Building Footprint */}
+                {/* Terminal 1 Building Footprint */}
                 <g transform="translate(480, 80)">
                   <rect width="180" height="90" rx="12" fill="#0f172a" stroke="#334155" strokeWidth="2" />
                   <text x="90" y="35" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="bold">
-                    DELHI AIRPORT (DEL)
+                    PATNA AIRPORT (PAT)
                   </text>
                   <text x="90" y="55" textAnchor="middle" fill="#f8fafc" fontSize="13" fontWeight="900">
-                    TERMINAL 3 FORECOURT
+                    TERMINAL 1 FORECOURT
                   </text>
                   <text x="90" y="72" textAnchor="middle" fill="#38bdf8" fontSize="10" fontWeight="bold">
                     Arrivals Gate & Baggage Belts
                   </text>
                 </g>
 
-                {/* Pickup Target: Pillar 14 */}
+                {/* Pickup Target: Designated Pillar */}
                 <g transform="translate(560, 220)">
                   <circle r="28" fill="#0284c7" fillOpacity="0.15" />
                   <circle r="18" fill="#0284c7" fillOpacity="0.3" className="animate-ping" />
@@ -306,7 +306,7 @@ export const LiveTrackingPage = () => {
                   {/* Pillar Label Badge */}
                   <rect x="-60" y="16" width="120" height="26" rx="6" fill="#0369a1" stroke="#38bdf8" strokeWidth="1" />
                   <text x="0" y="33" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold">
-                    📍 Pillar 14 Meet-up
+                    📍 {pool.meetingPoint ? pool.meetingPoint.split(',')[0] : 'Pillar 3'} Meet-up
                   </text>
                 </g>
 
@@ -377,7 +377,7 @@ export const LiveTrackingPage = () => {
           <div className="bg-sky-50 border border-sky-200/90 rounded-2xl p-4 flex items-center justify-between text-xs">
             <div className="flex items-center space-x-2.5">
               <div className="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold">
-                14
+                {pool?.meetingPoint?.match(/Pillar\s*(\d+)/i)?.[1] || '3'}
               </div>
               <div>
                 <span className="font-bold text-navy-900 block">Where to wait for your cab:</span>
@@ -420,7 +420,7 @@ export const LiveTrackingPage = () => {
                     ★ <strong>{pool.driverRating}</strong> (2,410+ Airport Airport Trips)
                   </p>
                   <span className="inline-block mt-1 text-[10px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
-                    Verified Delhi Commercial Chauffeur
+                    Verified Bihar Commercial Chauffeur (Patna Airport Registered)
                   </span>
                 </div>
               </div>

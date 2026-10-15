@@ -88,10 +88,10 @@ export const Footer = () => {
 
         <div className="mt-10 pt-6 border-t border-navy-800 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-4">
           <div>
-            © {new Date().getFullYear()} AeroPool Technologies. Designed for seamless airport mobility.
+            © {new Date().getFullYear()} AeroPool Technologies. Standardized for Jay Prakash Narayan Airport, Patna (PAT).
           </div>
           <div className="flex items-center space-x-4">
-            <span>Terminal 1, 2 & 3 Support</span>
+            <span>Jay Prakash Narayan Airport Terminal 1 & 2</span>
             <span>•</span>
             <span>Zero Luggage Bottleneck Guarantee</span>
           </div>

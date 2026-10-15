@@ -6,8 +6,8 @@ import { MapPin, Navigation, Luggage, Phone, AlertCircle, ShieldCheck, Clock, Ex
 
 export const TerminalGuidePage = () => {
   const { activePool } = usePool();
-  const currentTerminal = activePool?.terminal || 'T3';
-  const currentPillar = activePool?.meetingPoint || 'Pillar 14';
+  const currentTerminal = activePool?.terminal || 'T1';
+  const currentPillar = activePool?.meetingPoint || 'Pillar 3';
 
   return (
     <div className="space-y-8 pb-16">
@@ -21,10 +21,10 @@ export const TerminalGuidePage = () => {
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight">
-                Airport Terminal & Meeting Point Guide
+                Patna Airport (PAT) Terminal & Meeting Point Guide
               </h1>
               <p className="text-xs sm:text-sm text-slate-500">
-                Official layout map for airport arrival gates, baggage reclaim belts, and cab pickup pillars
+                Official layout map for Jay Prakash Narayan Airport arrival gates, baggage reclaim belts, and cab pickup pillars
               </p>
             </div>
           </div>

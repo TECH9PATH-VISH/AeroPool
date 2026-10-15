@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { TERMINALS } from '../data/mockData';
 import { MapPin, Navigation, Car, Luggage, ShieldCheck, Info, CheckCircle2 } from 'lucide-react';
 
-export const TerminalMapModal = ({ activeTerminal = 'T3', activePillar = 'Pillar 14' }) => {
+export const TerminalMapModal = ({ activeTerminal = 'T1', activePillar = 'Pillar 3' }) => {
   const [selectedTerminal, setSelectedTerminal] = useState(activeTerminal);
 
   const pillars = [
-    { num: 2, label: 'Airport Prepaid Taxi Bay', active: false },
-    { num: 4, label: 'T1 Commercial Bay (Exit Gate B)', active: activePillar.includes('Pillar 4') },
-    { num: 6, label: 'T2 Rideshare Hub (Lane 2)', active: activePillar.includes('Pillar 6') },
-    { num: 8, label: 'Hotel & Inter-Terminal Shuttle', active: false },
-    { num: 10, label: 'Airport Express Metro Link', active: false },
-    { num: 14, label: 'T3 Forecourt Staging (Lane 3)', active: activePillar.includes('Pillar 14') },
-    { num: 16, label: 'T3 Commercial Bay (Lane 3)', active: activePillar.includes('Pillar 16') },
-    { num: 18, label: 'Inter-City Coach Station', active: false },
+    { num: 1, label: 'BSTDC Tourism & Prepaid Taxi Counter', active: activePillar.includes('Pillar 1') },
+    { num: 2, label: 'T1 Commercial Bay (Exit Gate A)', active: activePillar.includes('Pillar 2') },
+    { num: 3, label: 'AeroPool Designated Staging (Gate B)', active: activePillar.includes('Pillar 3') },
+    { num: 4, label: 'App Cab Pickup Hub (Lane 2)', active: activePillar.includes('Pillar 4') },
+    { num: 5, label: 'City Bus & Auto-Rickshaw Stand', active: activePillar.includes('Pillar 5') },
+    { num: 6, label: 'Terminal 2 Expansion Forecourt', active: activePillar.includes('Pillar 6') },
+    { num: 7, label: 'VIP & Official Vehicle Staging', active: activePillar.includes('Pillar 7') },
+    { num: 8, label: 'Long-Term Parking & Car Rentals', active: activePillar.includes('Pillar 8') },
   ];
 
   return (
@@ -24,10 +24,10 @@ export const TerminalMapModal = ({ activeTerminal = 'T3', activePillar = 'Pillar
             <span className="p-2 rounded-xl bg-sky-50 text-sky-600">
               <Navigation className="w-5 h-5" />
             </span>
-            <h3 className="text-lg font-bold text-navy-900">Interactive Airport Terminal & Meeting Point Guide</h3>
+            <h3 className="text-lg font-bold text-navy-900">Patna Airport (PAT) Terminal & Meeting Point Guide</h3>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Visual pickup zones, meeting pillars, and baggage carousel walking paths
+            Visual pickup zones, meeting pillars, and baggage carousel walking paths at Jay Prakash Narayan Airport
           </p>
         </div>
 
@@ -62,15 +62,15 @@ export const TerminalMapModal = ({ activeTerminal = 'T3', activePillar = 'Pillar
           <div className="bg-slate-800/80 border border-slate-700 rounded-xl p-3 flex items-center justify-between text-xs">
             <div className="flex items-center space-x-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-              <span className="font-bold text-slate-200">Terminal {selectedTerminal} Arrival Flight Gates (1 - 36)</span>
+              <span className="font-bold text-slate-200">Terminal {selectedTerminal} Arrival Flight Gates (1 - 6)</span>
             </div>
-            <span className="text-[11px] text-sky-400 font-mono">Flight Deboarding Zone</span>
+            <span className="text-[11px] text-sky-400 font-mono">Flight Deboarding Zone (Runway 25)</span>
           </div>
 
           {/* Walking Corridor / Down Arrow */}
           <div className="flex justify-center">
             <span className="text-[11px] text-slate-400 font-medium bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-              ⬇ Escalators & Immigration Corridor ⬇
+              ⬇ Ground Floor Arrival & Baggage Hall Corridor ⬇
             </span>
           </div>
 
@@ -79,22 +79,25 @@ export const TerminalMapModal = ({ activeTerminal = 'T3', activePillar = 'Pillar
             <div className="flex items-center justify-between text-xs mb-3">
               <span className="font-bold text-slate-300 flex items-center space-x-1.5">
                 <Luggage className="w-4 h-4 text-sky-400" />
-                <span>Baggage Claim Hall (Carousels 1 - 8)</span>
+                <span>Baggage Claim Hall (Carousels 1 - 3)</span>
               </span>
-              <span className="text-[10px] text-slate-400">Average wait: 12-18 mins</span>
+              <span className="text-[10px] text-slate-400">Average wait: 8-15 mins</span>
             </div>
 
-            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 text-center text-[10px] font-mono">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+            <div className="grid grid-cols-3 gap-3 text-center text-xs font-mono">
+              {[1, 2, 3].map((num) => (
                 <div
                   key={num}
-                  className={`p-1.5 rounded-lg border ${
-                    num === 4 || num === 5
+                  className={`p-2.5 rounded-xl border ${
+                    num === 2
                       ? 'border-sky-500/60 bg-sky-500/20 text-sky-300 font-bold'
                       : 'border-slate-700 bg-slate-800/40 text-slate-400'
                   }`}
                 >
-                  Belt {num}
+                  <div className="font-bold">Belt {num}</div>
+                  <div className="text-[10px] text-slate-500 mt-0.5">
+                    {num === 2 ? 'IndiGo / Air India' : num === 1 ? 'SpiceJet / Akasa' : 'General Reclaim'}
+                  </div>
                 </div>
               ))}
             </div>
@@ -103,10 +106,10 @@ export const TerminalMapModal = ({ activeTerminal = 'T3', activePillar = 'Pillar
           {/* Exit Gate Doors */}
           <div className="flex items-center justify-around py-1 text-xs">
             <div className="bg-navy-800 border border-slate-700 px-4 py-1.5 rounded-lg text-slate-300 text-[11px] font-bold">
-              🚪 Customs Exit Gate A
+              🚪 Arrival Exit Gate A (Prepaid Taxi)
             </div>
             <div className="bg-navy-800 border border-slate-700 px-4 py-1.5 rounded-lg text-slate-300 text-[11px] font-bold">
-              🚪 Customs Exit Gate B
+              🚪 Arrival Exit Gate B (AeroPool Staging)
             </div>
           </div>
 
@@ -155,7 +158,7 @@ export const TerminalMapModal = ({ activeTerminal = 'T3', activePillar = 'Pillar
           <div className="bg-slate-800/90 border border-slate-700 rounded-xl p-3 flex items-center justify-between text-xs">
             <div className="flex items-center space-x-2">
               <Car className="w-4 h-4 text-emerald-400" />
-              <span className="font-bold text-slate-200">Express Cab Bays 1 - 6 (Dedicated Pickup Lanes)</span>
+              <span className="font-bold text-slate-200">Express Cab Bays 1 - 4 (Terminal 1 Commercial Pickup Lanes)</span>
             </div>
             <span className="text-[11px] text-emerald-400 font-semibold">Vehicle Entry & Staging Authorized</span>
           </div>

@@ -20,7 +20,7 @@ import {
 export const FareEstimatorPage = () => {
   const { currency, setSearchCriteria, setActiveTab } = usePool();
 
-  const [selectedZoneId, setSelectedZoneId] = useState('gurugram_cybercity');
+  const [selectedZoneId, setSelectedZoneId] = useState('boring_road');
   const [passengerCount, setPassengerCount] = useState(3);
   const [luggageTier, setLuggageTier] = useState('medium_suitcase');
   const [isLateNight, setIsLateNight] = useState(false);

@@ -16,7 +16,7 @@ import {
 
 const PoolContext = createContext();
 
-const DATA_VERSION = 'v2_real_world_delhi';
+const DATA_VERSION = 'v3_patna_airport_standard';
 
 export const PoolProvider = ({ children }) => {
   // Load pools with version check to ensure no stale dummy data persists
@@ -28,7 +28,7 @@ export const PoolProvider = ({ children }) => {
         localStorage.setItem('aeropool_data_version', DATA_VERSION);
         const fresh = generateRealPools();
         localStorage.setItem('aeropool_pools', JSON.stringify(fresh));
-        localStorage.setItem('aeropool_active_id', 'pool-gurugram-1');
+        localStorage.setItem('aeropool_active_id', 'pool-boring-road-1');
         return fresh;
       }
       const saved = localStorage.getItem('aeropool_pools');
@@ -42,13 +42,13 @@ export const PoolProvider = ({ children }) => {
   const [myActivePoolId, setMyActivePoolId] = useState(() => {
     try {
       const saved = localStorage.getItem('aeropool_active_id');
-      if (saved && saved.startsWith('pool-gurugram')) return saved;
-      if (saved && saved.startsWith('pool-south-delhi')) return saved;
-      if (saved && saved.startsWith('pool-central')) return saved;
-      if (saved && saved.startsWith('pool-noida')) return saved;
-      return 'pool-gurugram-1';
+      if (saved && saved.startsWith('pool-boring-road')) return saved;
+      if (saved && saved.startsWith('pool-kankarbagh')) return saved;
+      if (saved && saved.startsWith('pool-patna-junction')) return saved;
+      if (saved && saved.startsWith('pool-danapur')) return saved;
+      return 'pool-boring-road-1';
     } catch (e) {
-      return 'pool-gurugram-1';
+      return 'pool-boring-road-1';
     }
   });
 
@@ -67,17 +67,17 @@ export const PoolProvider = ({ children }) => {
     etaMinutes: 4,
     progress: 25,
     speedKmH: 28,
-    locationText: 'Approaching Terminal 3 Curbside Forecourt'
+    locationText: 'Approaching Patna Airport (PAT) Terminal 1 Curbside Forecourt'
   });
 
-  // Realistic search criteria based on current arrivals at DEL Terminal 3
+  // Realistic search criteria based on current arrivals at PAT Terminal 1
   const [searchCriteria, setSearchCriteria] = useState({
-    flightNumber: '6E-2132',
+    flightNumber: '6E-2126',
     arrivalDate: new Date().toLocaleDateString('en-CA'),
     arrivalTime: getDynamicTime(22),
-    terminal: 'T3',
-    destinationZone: 'gurugram_cybercity',
-    destinationAddress: 'DLF CyberHub (Building 10 / Tower B), DLF Phase 2',
+    terminal: 'T1',
+    destinationZone: 'boring_road',
+    destinationAddress: 'Boring Road Chauraha (Near AN College), Patliputra',
     luggageTier: 'medium_suitcase',
     passengerCount: 1,
     maxWaitBuffer: 30
@@ -128,7 +128,7 @@ export const PoolProvider = ({ children }) => {
       maskedName: `${MOCK_USER_PROFILE.name.split(' ')[0]} ${MOCK_USER_PROFILE.name.split(' ')[1]?.[0] || ''}. (You)`,
       avatar: MOCK_USER_PROFILE.avatar,
       badge: MOCK_USER_PROFILE.badge,
-      flightNumber: userCustomData.flightNumber || searchCriteria.flightNumber || '6E-2132',
+      flightNumber: userCustomData.flightNumber || searchCriteria.flightNumber || '6E-2126',
       luggageTier,
       luggageDescription:
         luggageTier === 'heavy_bags'
@@ -370,11 +370,11 @@ export const PoolProvider = ({ children }) => {
   const refreshRealWorldData = () => {
     const fresh = generateRealPools();
     setPools(fresh);
-    setMyActivePoolId('pool-gurugram-1');
+    setMyActivePoolId('pool-boring-road-1');
     localStorage.setItem('aeropool_pools', JSON.stringify(fresh));
     localStorage.setItem('aeropool_data_version', DATA_VERSION);
-    localStorage.setItem('aeropool_active_id', 'pool-gurugram-1');
-    showToast("Synced today's real-time flights & airport pools.", 'success');
+    localStorage.setItem('aeropool_active_id', 'pool-boring-road-1');
+    showToast("Synced today's Patna Airport real-time flights & airport pools.", 'success');
   };
 
   const activePool = (pools && pools.length > 0 ? (pools.find((p) => p.id === myActivePoolId) || pools[0]) : null) || INITIAL_POOLS[0];

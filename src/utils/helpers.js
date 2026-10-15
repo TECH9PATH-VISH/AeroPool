@@ -98,15 +98,16 @@ export const calculateCO2Saved = (distanceKm, occupantsCount) => {
   return parseFloat(saved.toFixed(1));
 };
 
-// Real-world airport meeting points for Indira Gandhi International Airport (DEL)
+// Real-world airport meeting points for Jay Prakash Narayan Airport, Patna (PAT)
 export const getMeetingPointForTerminal = (terminalId) => {
   switch (terminalId) {
     case 'T1':
-      return 'Pillar 4, Outside Arrival Gate B (Commercial Taxi Bay)';
-    case 'T2':
-      return 'Pillar 6, Commercial Rideshare Pickup Hub (Lane 2)';
-    case 'T3':
     default:
-      return 'Pillar 14 - 16, Commercial Forecourt Lane 3 (MLCP Ground Level)';
+      return 'Pillar 3 - 4, Commercial Forecourt Lane 1 (Outside Arrival Gate B & Prepaid Booth)';
+    case 'T2':
+      return 'Pillar 6, Terminal 2 Commercial Rideshare Hub (Lane 2)';
+    case 'VIP':
+      return 'VIP Curbside Forecourt, Shaheed Pir Ali Khan Marg';
   }
 };
+

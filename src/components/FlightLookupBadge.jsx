@@ -56,7 +56,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
         <div className="relative">
           <input
             type="text"
-            placeholder="e.g. 6E-2132, AI-806, UK-996, EK-512"
+            placeholder="e.g. 6E-2126, AI-407, 6E-6383, SG-8721"
             value={query}
             onChange={handleInputChange}
             onFocus={() => setShowDropdown(true)}
@@ -86,7 +86,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
         {showDropdown && (
           <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto divide-y divide-slate-100">
             <div className="p-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 flex items-center justify-between">
-              <span>Live Scheduled Arrivals • IGI Airport (DEL)</span>
+              <span>Live Scheduled Arrivals • Patna Airport (PAT)</span>
               <button
                 type="button"
                 onClick={() => setShowDropdown(false)}
@@ -136,7 +136,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
                   {flightInfo.airline} ({flightInfo.flightNumber})
                 </h4>
                 <p className="text-[11px] text-slate-600">
-                  Route: <strong>{flightInfo.origin}</strong> ➔ Indira Gandhi Intl (DEL)
+                  Route: <strong>{flightInfo.origin}</strong> ➔ Patna Jay Prakash Narayan Intl (PAT)
                 </p>
               </div>
             </div>
