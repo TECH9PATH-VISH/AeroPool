@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { usePool } from '../context/PoolContext';
-import { Plane, Car, Users, LayoutDashboard, Calculator, MapPin, RefreshCw, ChevronDown, CheckCircle2, ShieldCheck, DollarSign } from 'lucide-react';
+import { Plane, Car, Users, LayoutDashboard, Calculator, MapPin, RefreshCw, ChevronDown, CheckCircle2, ShieldCheck, DollarSign, Navigation } from 'lucide-react';
 
 export const Navbar = () => {
-  const { activeTab, setActiveTab, pools, myActivePoolId, currency, setCurrency, resetToMockData, userProfile } = usePool();
+  const { activeTab, setActiveTab, pools, myActivePoolId, currency, setCurrency, resetToMockData, userProfile, isRideBooked } = usePool();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const navItems = [
     { id: 'book', label: 'Find a Ride', icon: Plane, badge: null },
     { id: 'matches', label: 'Active Pools', icon: Users, badge: pools.filter(p => p.status === 'matching').length },
     { id: 'dashboard', label: 'Live Pool Hub', icon: LayoutDashboard, dot: !!myActivePoolId },
+    { id: 'tracking', label: 'Live Cab Radar', icon: Navigation, badge: isRideBooked ? 'LIVE' : null, dot: isRideBooked },
     { id: 'estimator', label: 'Fare Calculator', icon: Calculator, badge: null },
     { id: 'terminal-map', label: 'Terminal Map', icon: MapPin, badge: null },
   ];

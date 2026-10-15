@@ -8,6 +8,7 @@ import { MatchesPage } from './pages/MatchesPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { FareEstimatorPage } from './pages/FareEstimatorPage';
 import { TerminalGuidePage } from './pages/TerminalGuidePage';
+import { LiveTrackingPage } from './pages/LiveTrackingPage';
 
 const AppContent = () => {
   const { activeTab } = usePool();
@@ -20,6 +21,8 @@ const AppContent = () => {
         return <MatchesPage />;
       case 'dashboard':
         return <DashboardPage />;
+      case 'tracking':
+        return <LiveTrackingPage />;
       case 'estimator':
         return <FareEstimatorPage />;
       case 'terminal-map':

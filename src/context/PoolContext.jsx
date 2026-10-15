@@ -52,11 +52,23 @@ export const PoolProvider = ({ children }) => {
     }
   });
 
-  // Active navigation tab: 'book' | 'matches' | 'dashboard' | 'estimator' | 'terminal-map'
+  // Active navigation tab: 'book' | 'matches' | 'dashboard' | 'estimator' | 'terminal-map' | 'tracking'
   const [activeTab, setActiveTab] = useState('book');
 
   // Currency toggle: '₹' or '$'
   const [currency, setCurrency] = useState('₹');
+
+  // Ride Booking & Live Rapido/Uber Style Tracking State
+  const [isRideBooked, setIsRideBooked] = useState(true);
+  const [ridePin] = useState(() => String(Math.floor(1000 + Math.random() * 9000)));
+  const [rideTracking, setRideTracking] = useState({
+    status: 'en_route',
+    distanceKm: 1.4,
+    etaMinutes: 4,
+    progress: 25,
+    speedKmH: 28,
+    locationText: 'Approaching Terminal 3 Curbside Forecourt'
+  });
 
   // Realistic search criteria based on current arrivals at DEL Terminal 3
   const [searchCriteria, setSearchCriteria] = useState({
@@ -391,7 +403,12 @@ export const PoolProvider = ({ children }) => {
         toast,
         showToast,
         closeToast,
-        userProfile: MOCK_USER_PROFILE
+        userProfile: MOCK_USER_PROFILE,
+        isRideBooked,
+        setIsRideBooked,
+        ridePin,
+        rideTracking,
+        setRideTracking
       }}
     >
       {children}
