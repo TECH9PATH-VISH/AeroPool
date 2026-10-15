@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePool } from '../context/PoolContext';
 import { formatCurrency } from '../utils/helpers';
+import { INITIAL_POOLS } from '../data/mockData';
 import {
   Car,
   Navigation,
@@ -39,7 +40,7 @@ export const LiveTrackingPage = () => {
   const [fastForward, setFastForward] = useState(false);
 
   // Active pool fallback
-  const pool = activePool;
+  const pool = activePool || INITIAL_POOLS[0];
 
   const {
     status = 'en_route',
@@ -65,10 +66,12 @@ export const LiveTrackingPage = () => {
         let newStatus = prev.status;
         let newLocation = prev.locationText;
 
+        const pillarName = pool?.meetingPoint?.split(',')[0] || 'Pillar 14';
+
         if (newProgress >= 100 || newDist <= 0.05) {
           newStatus = 'arrived';
-          newLocation = `Arrived at ${pool.meetingPoint.split(',')[0]} (Lane 3 Forecourt)`;
-          showToast(`Cab (${pool.vehiclePlate}) has arrived at ${pool.meetingPoint.split(',')[0]}!`, 'success');
+          newLocation = `Arrived at ${pillarName} (Lane 3 Forecourt)`;
+          showToast(`Cab (${pool?.vehiclePlate || 'Airport Taxi'}) has arrived at ${pillarName}!`, 'success');
         } else if (newProgress > 60) {
           newLocation = 'Turned into Terminal 3 Commercial Cab Lane 3';
         } else if (newProgress > 30) {

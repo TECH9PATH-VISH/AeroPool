@@ -377,7 +377,7 @@ export const PoolProvider = ({ children }) => {
     showToast("Synced today's real-time flights & airport pools.", 'success');
   };
 
-  const activePool = pools.find((p) => p.id === myActivePoolId) || pools[0] || null;
+  const activePool = (pools && pools.length > 0 ? (pools.find((p) => p.id === myActivePoolId) || pools[0]) : null) || INITIAL_POOLS[0];
 
   return (
     <PoolContext.Provider

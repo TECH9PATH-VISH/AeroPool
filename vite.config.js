@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/AeroPool/',
+  base: process.env.GITHUB_ACTIONS ? '/AeroPool/' : './',
   plugins: [
     react(),
     tailwindcss(),
