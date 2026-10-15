@@ -7,7 +7,7 @@ import { X, Users, Plane, MapPin, Sparkles, ShieldCheck, ArrowRight, CheckCircle
 export const JoinPoolModal = ({ pool, isOpen, onClose }) => {
   const { joinPool, searchCriteria, currency } = usePool();
   const [selectedLuggage, setSelectedLuggage] = useState(searchCriteria.luggageTier || 'medium_suitcase');
-  const [flightNumber, setFlightNumber] = useState(searchCriteria.flightNumber || 'AI-402');
+  const [flightNumber, setFlightNumber] = useState(searchCriteria.flightNumber || '6E-2132');
 
   if (!isOpen || !pool) return null;
 

@@ -10,10 +10,10 @@ export const CreatePoolModal = ({ isOpen, onClose }) => {
 
   const [formData, setFormData] = useState({
     poolName: '',
-    flightNumber: searchCriteria.flightNumber || 'AI-402',
+    flightNumber: searchCriteria.flightNumber || '6E-2132',
     terminal: searchCriteria.terminal || 'T3',
-    destinationZone: searchCriteria.destinationZone || 'downtown',
-    destinationAddress: searchCriteria.destinationAddress || 'Downtown Central Plaza',
+    destinationZone: searchCriteria.destinationZone || 'gurugram_cybercity',
+    destinationAddress: searchCriteria.destinationAddress || 'DLF CyberHub (Building 10 / Tower B), DLF Phase 2',
     luggageTier: searchCriteria.luggageTier || 'medium_suitcase',
     maxWaitBuffer: '30'
   });
@@ -119,7 +119,7 @@ export const CreatePoolModal = ({ isOpen, onClose }) => {
               type="text"
               value={formData.destinationAddress}
               onChange={(e) => setFormData({ ...formData, destinationAddress: e.target.value })}
-              placeholder="e.g. Grand Central Hotel, Downtown or Tech Boulevard"
+              placeholder="e.g. DLF CyberHub Tower B, One Horizon Center, or Select CITYWALK"
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:ring-2 focus:ring-sky-500"
             />
           </div>
@@ -137,7 +137,7 @@ export const CreatePoolModal = ({ isOpen, onClose }) => {
               type="text"
               value={formData.poolName}
               onChange={(e) => setFormData({ ...formData, poolName: e.target.value })}
-              placeholder="e.g. Cyber City Tech Flight Pool"
+              placeholder="e.g. Gurugram CyberHub Express Pool"
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:ring-2 focus:ring-sky-500"
             />
           </div>

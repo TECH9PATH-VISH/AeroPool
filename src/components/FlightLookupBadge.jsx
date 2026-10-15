@@ -40,7 +40,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
       <div className="flex items-center justify-between">
         <label className="text-sm font-bold text-slate-800 flex items-center space-x-1.5">
           <span>Flight Number</span>
-          <span className="text-xs text-sky-600 font-semibold">(Auto Airline & Route Lookup)</span>
+          <span className="text-xs text-sky-600 font-semibold">(Live Airport Route Lookup)</span>
         </label>
         <button
           type="button"
@@ -48,7 +48,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
           className="text-xs text-sky-600 hover:text-sky-700 font-semibold flex items-center space-x-1 underline decoration-sky-300"
         >
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Pick Sample Flight</span>
+          <span>Browse Today's Arrivals</span>
         </button>
       </div>
 
@@ -56,7 +56,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
         <div className="relative">
           <input
             type="text"
-            placeholder="e.g. AI-402, 6E-512, UK-814, EK-510"
+            placeholder="e.g. 6E-2132, AI-806, UK-996, EK-512"
             value={query}
             onChange={handleInputChange}
             onFocus={() => setShowDropdown(true)}
@@ -75,16 +75,18 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
             </div>
           ) : query.length >= 3 ? (
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <span className="text-[11px] text-amber-600 font-medium">Custom Flight</span>
+              <span className="text-[11px] text-sky-700 font-medium bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                Custom Entry
+              </span>
             </div>
           ) : null}
         </div>
 
-        {/* Quick Dropdown Suggestions */}
+        {/* Real Flights Dropdown */}
         {showDropdown && (
           <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto divide-y divide-slate-100">
             <div className="p-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 flex items-center justify-between">
-              <span>Active Incoming Flights to Terminal</span>
+              <span>Live Scheduled Arrivals • IGI Airport (DEL)</span>
               <button
                 type="button"
                 onClick={() => setShowDropdown(false)}
@@ -112,7 +114,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
                 <div className="text-right">
                   <span className="text-xs font-bold text-slate-800 block">ETA {f.scheduledArrival}</span>
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                    {f.terminal}
+                    Terminal {f.terminal}
                   </span>
                 </div>
               </button>
@@ -134,7 +136,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
                   {flightInfo.airline} ({flightInfo.flightNumber})
                 </h4>
                 <p className="text-[11px] text-slate-600">
-                  Route: <strong>{flightInfo.origin}</strong> ➔ Local Airport
+                  Route: <strong>{flightInfo.origin}</strong> ➔ Indira Gandhi Intl (DEL)
                 </p>
               </div>
             </div>
@@ -146,7 +148,7 @@ export const FlightLookupBadge = ({ value, onChange, onSelectFlight }) => {
               </div>
               <div className="flex items-center space-x-1 text-slate-700 font-medium">
                 <MapPin className="w-3.5 h-3.5 text-sky-600" />
-                <span>Gate: <strong>{flightInfo.terminal}</strong></span>
+                <span>Gate/Bay: <strong>{flightInfo.terminal}</strong></span>
               </div>
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${

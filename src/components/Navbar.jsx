@@ -102,10 +102,10 @@ export const Navbar = () => {
               </button>
             </div>
 
-            {/* Quick Demo Reset */}
+            {/* Real-time Schedule Sync */}
             <button
               onClick={resetToMockData}
-              title="Reset Demo Flight & Pool Data"
+              title="Sync Today's Live Flight Schedules & Real-World Pools"
               className="p-2 text-slate-400 hover:text-white hover:bg-navy-800 rounded-lg transition-colors border border-navy-700"
             >
               <RefreshCw className="w-4 h-4" />

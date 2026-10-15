@@ -26,13 +26,13 @@ import {
 export const BookRidePage = () => {
   const { searchCriteria, setSearchCriteria, setActiveTab, pools, myActivePoolId, currency } = usePool();
 
-  const [flightNumber, setFlightNumber] = useState(searchCriteria.flightNumber || 'AI-402');
+  const [flightNumber, setFlightNumber] = useState(searchCriteria.flightNumber || '6E-2132');
   const [arrivalDate, setArrivalDate] = useState(searchCriteria.arrivalDate || new Date().toISOString().split('T')[0]);
-  const [arrivalTime, setArrivalTime] = useState(searchCriteria.arrivalTime || '18:45');
+  const [arrivalTime, setArrivalTime] = useState(searchCriteria.arrivalTime || '19:15');
   const [terminal, setTerminal] = useState(searchCriteria.terminal || 'T3');
-  const [destinationZone, setDestinationZone] = useState(searchCriteria.destinationZone || 'tech_park');
+  const [destinationZone, setDestinationZone] = useState(searchCriteria.destinationZone || 'gurugram_cybercity');
   const [destinationAddress, setDestinationAddress] = useState(
-    searchCriteria.destinationAddress || 'Cyber City Sector V, Building 10'
+    searchCriteria.destinationAddress || 'DLF CyberHub (Building 10 / Tower B), DLF Phase 2'
   );
   const [luggageTier, setLuggageTier] = useState(searchCriteria.luggageTier || 'medium_suitcase');
   const [passengerCount, setPassengerCount] = useState(searchCriteria.passengerCount || 1);
@@ -105,7 +105,7 @@ export const BookRidePage = () => {
           </h1>
 
           <p className="mt-4 text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
-            AeroPool automatically clusters incoming passengers landing within $\pm$30 minutes heading in the same geographic zone. Luggage volume matrix prevents trunk overflow, auto-upgrading to SUVs when needed!
+            AeroPool automatically clusters incoming passengers landing within ±30 minutes heading in the same geographic zone. Luggage volume matrix prevents trunk overflow, auto-upgrading to SUVs when needed!
           </p>
 
           {/* Quick Stats Metrics */}
@@ -258,7 +258,7 @@ export const BookRidePage = () => {
                   value={destinationAddress}
                   onChange={(e) => setDestinationAddress(e.target.value)}
                   onFocus={() => setAddressSuggestions(true)}
-                  placeholder="e.g. Building 10, Silicon Plaza or Hotel Grand Central"
+                  placeholder="e.g. DLF CyberHub Tower B, One Horizon Center, or Select CITYWALK"
                   className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-3 text-xs sm:text-sm font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-sky-500"
                 />
                 

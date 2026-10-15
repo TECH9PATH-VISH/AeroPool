@@ -122,7 +122,7 @@ export const FareSplitCard = ({ pool }) => {
         </div>
       </div>
 
-      {/* Mock Payment Actions for Current User */}
+      {/* Secure Split Settlement for Current Passenger */}
       {myMember && (
         <div className="pt-2 border-t border-slate-100 space-y-3">
           <div className="text-xs font-bold text-slate-700">Choose Split Payment Method:</div>

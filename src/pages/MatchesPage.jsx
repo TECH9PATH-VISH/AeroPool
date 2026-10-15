@@ -71,7 +71,7 @@ export const MatchesPage = () => {
               Airport Cab Matching & Group Clusters
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-              Matching incoming passengers landing within $\pm$30 minutes with identical destination zones. Luggage volume matrix prevents trunk overflows.
+              Matching incoming passengers landing within ±30 minutes with identical destination zones. Luggage volume matrix prevents trunk overflows.
             </p>
           </div>
 

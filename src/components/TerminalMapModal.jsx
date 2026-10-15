@@ -6,14 +6,14 @@ export const TerminalMapModal = ({ activeTerminal = 'T3', activePillar = 'Pillar
   const [selectedTerminal, setSelectedTerminal] = useState(activeTerminal);
 
   const pillars = [
-    { num: 2, label: 'Prepaid Taxi', active: false },
-    { num: 4, label: 'T1 App Cab Gate', active: activePillar.includes('Pillar 4') },
-    { num: 7, label: 'Hotel Shuttles', active: false },
-    { num: 9, label: 'T2 Commercial Bay', active: activePillar.includes('Pillar 9') },
-    { num: 12, label: 'Lane 2 Pickups', active: activePillar.includes('Pillar 12') },
-    { num: 14, label: 'AeroPool Express Hub (T3)', active: activePillar.includes('Pillar 14') },
-    { num: 16, label: 'Forecourt Lane 3', active: activePillar.includes('Pillar 16') },
-    { num: 18, label: 'Bus & Coach Bay', active: false },
+    { num: 2, label: 'Airport Prepaid Taxi Bay', active: false },
+    { num: 4, label: 'T1 Commercial Bay (Exit Gate B)', active: activePillar.includes('Pillar 4') },
+    { num: 6, label: 'T2 Rideshare Hub (Lane 2)', active: activePillar.includes('Pillar 6') },
+    { num: 8, label: 'Hotel & Inter-Terminal Shuttle', active: false },
+    { num: 10, label: 'Airport Express Metro Link', active: false },
+    { num: 14, label: 'T3 Forecourt Staging (Lane 3)', active: activePillar.includes('Pillar 14') },
+    { num: 16, label: 'T3 Commercial Bay (Lane 3)', active: activePillar.includes('Pillar 16') },
+    { num: 18, label: 'Inter-City Coach Station', active: false },
   ];
 
   return (

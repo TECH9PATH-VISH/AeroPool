@@ -1,17 +1,40 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { INITIAL_POOLS, MOCK_USER_PROFILE, DESTINATION_ZONES, TERMINALS } from '../data/mockData';
-import { determineVehicleType, calculateSavings, calculateCO2Saved, getMeetingPointForTerminal } from '../utils/helpers';
+import {
+  INITIAL_POOLS,
+  MOCK_USER_PROFILE,
+  DESTINATION_ZONES,
+  TERMINALS,
+  generateRealPools,
+  getDynamicTime
+} from '../data/mockData';
+import {
+  determineVehicleType,
+  calculateSavings,
+  calculateCO2Saved,
+  getMeetingPointForTerminal
+} from '../utils/helpers';
 
 const PoolContext = createContext();
 
+const DATA_VERSION = 'v2_real_world_delhi';
+
 export const PoolProvider = ({ children }) => {
-  // Load pools from localStorage or fallback
+  // Load pools with version check to ensure no stale dummy data persists
   const [pools, setPools] = useState(() => {
     try {
+      const storedVersion = localStorage.getItem('aeropool_data_version');
+      if (storedVersion !== DATA_VERSION) {
+        // Upgrade or fresh initialize
+        localStorage.setItem('aeropool_data_version', DATA_VERSION);
+        const fresh = generateRealPools();
+        localStorage.setItem('aeropool_pools', JSON.stringify(fresh));
+        localStorage.setItem('aeropool_active_id', 'pool-gurugram-1');
+        return fresh;
+      }
       const saved = localStorage.getItem('aeropool_pools');
-      return saved ? JSON.parse(saved) : INITIAL_POOLS;
+      return saved ? JSON.parse(saved) : generateRealPools();
     } catch (e) {
-      return INITIAL_POOLS;
+      return generateRealPools();
     }
   });
 
@@ -19,9 +42,13 @@ export const PoolProvider = ({ children }) => {
   const [myActivePoolId, setMyActivePoolId] = useState(() => {
     try {
       const saved = localStorage.getItem('aeropool_active_id');
-      return saved || 'pool-cyber-1';
+      if (saved && saved.startsWith('pool-gurugram')) return saved;
+      if (saved && saved.startsWith('pool-south-delhi')) return saved;
+      if (saved && saved.startsWith('pool-central')) return saved;
+      if (saved && saved.startsWith('pool-noida')) return saved;
+      return 'pool-gurugram-1';
     } catch (e) {
-      return 'pool-cyber-1';
+      return 'pool-gurugram-1';
     }
   });
 
@@ -31,14 +58,14 @@ export const PoolProvider = ({ children }) => {
   // Currency toggle: '₹' or '$'
   const [currency, setCurrency] = useState('₹');
 
-  // Search criteria from the booking form
+  // Realistic search criteria based on current arrivals at DEL Terminal 3
   const [searchCriteria, setSearchCriteria] = useState({
-    flightNumber: 'AI-402',
-    arrivalDate: new Date().toISOString().split('T')[0],
-    arrivalTime: '18:45',
+    flightNumber: '6E-2132',
+    arrivalDate: new Date().toLocaleDateString('en-CA'),
+    arrivalTime: getDynamicTime(22),
     terminal: 'T3',
-    destinationZone: 'tech_park',
-    destinationAddress: 'Cyber City Sector V, Building 10, Silicon Plaza',
+    destinationZone: 'gurugram_cybercity',
+    destinationAddress: 'DLF CyberHub (Building 10 / Tower B), DLF Phase 2',
     luggageTier: 'medium_suitcase',
     passengerCount: 1,
     maxWaitBuffer: 30
@@ -59,6 +86,7 @@ export const PoolProvider = ({ children }) => {
   useEffect(() => {
     try {
       localStorage.setItem('aeropool_pools', JSON.stringify(pools));
+      localStorage.setItem('aeropool_data_version', DATA_VERSION);
       if (myActivePoolId) {
         localStorage.setItem('aeropool_active_id', myActivePoolId);
       } else {
@@ -88,9 +116,14 @@ export const PoolProvider = ({ children }) => {
       maskedName: `${MOCK_USER_PROFILE.name.split(' ')[0]} ${MOCK_USER_PROFILE.name.split(' ')[1]?.[0] || ''}. (You)`,
       avatar: MOCK_USER_PROFILE.avatar,
       badge: MOCK_USER_PROFILE.badge,
-      flightNumber: userCustomData.flightNumber || searchCriteria.flightNumber || 'AI-402',
+      flightNumber: userCustomData.flightNumber || searchCriteria.flightNumber || '6E-2132',
       luggageTier,
-      luggageDescription: luggageTier === 'heavy_bags' ? '2+ Large Bags' : luggageTier === 'medium_suitcase' ? '1 Standard Suitcase' : 'Backpack / Handbag',
+      luggageDescription:
+        luggageTier === 'heavy_bags'
+          ? '2+ Large Bags'
+          : luggageTier === 'medium_suitcase'
+          ? '1 Standard Suitcase'
+          : 'Backpack / Handbag',
       units: luggageUnits,
       joinedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       paymentStatus: 'pending'
@@ -102,10 +135,13 @@ export const PoolProvider = ({ children }) => {
     // Recalculate vehicle and fare
     const vehicleInfo = determineVehicleType(updatedMembers);
     const zoneInfo = DESTINATION_ZONES.find((z) => z.id === pool.destinationZone);
-    const baseFare = vehicleInfo.type === 'SUV' ? Math.round((zoneInfo?.typicalSoloFare || 1400) * 1.15) : (zoneInfo?.typicalSoloFare || 1400);
+    const baseFare =
+      vehicleInfo.type === 'SUV'
+        ? Math.round((zoneInfo?.typicalSoloFare || 650) * 1.15)
+        : zoneInfo?.typicalSoloFare || 650;
     const perPerson = Math.round(baseFare / newCount);
     const savings = calculateSavings(pool.soloTaxiFare, perPerson);
-    const co2 = calculateCO2Saved(zoneInfo?.distanceKm || 30, newCount);
+    const co2 = calculateCO2Saved(zoneInfo?.distanceKm || 20, newCount);
 
     const updatedPool = {
       ...pool,
@@ -121,7 +157,7 @@ export const PoolProvider = ({ children }) => {
         {
           id: `msg-${Date.now()}`,
           senderId: 'system',
-          senderName: 'AeroPool Dispatch',
+          senderName: 'AeroPool Airport Dispatch',
           text: `${newMember.name} joined the pool from flight ${newMember.flightNumber}. Fare dropped to ${currency}${perPerson}/person!`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isSystem: true
@@ -143,12 +179,14 @@ export const PoolProvider = ({ children }) => {
 
     const remainingMembers = pool.currentMembers.filter((m) => m.id !== MOCK_USER_PROFILE.id);
     if (remainingMembers.length === 0) {
-      // If pool becomes empty, keep or remove
       setPools((prev) => prev.filter((p) => p.id !== poolId));
     } else {
       const vehicleInfo = determineVehicleType(remainingMembers);
       const zoneInfo = DESTINATION_ZONES.find((z) => z.id === pool.destinationZone);
-      const baseFare = vehicleInfo.type === 'SUV' ? Math.round((zoneInfo?.typicalSoloFare || 1400) * 1.15) : (zoneInfo?.typicalSoloFare || 1400);
+      const baseFare =
+        vehicleInfo.type === 'SUV'
+          ? Math.round((zoneInfo?.typicalSoloFare || 650) * 1.15)
+          : zoneInfo?.typicalSoloFare || 650;
       const perPerson = Math.round(baseFare / remainingMembers.length);
 
       const updatedPool = {
@@ -171,7 +209,8 @@ export const PoolProvider = ({ children }) => {
   // Create a brand new pool
   const createPool = (formData) => {
     const zone = DESTINATION_ZONES.find((z) => z.id === formData.destinationZone) || DESTINATION_ZONES[0];
-    const initialUnits = formData.luggageTier === 'heavy_bags' ? 2.5 : formData.luggageTier === 'medium_suitcase' ? 1.0 : 0.5;
+    const initialUnits =
+      formData.luggageTier === 'heavy_bags' ? 2.5 : formData.luggageTier === 'medium_suitcase' ? 1.0 : 0.5;
 
     const creator = {
       id: MOCK_USER_PROFILE.id,
@@ -179,9 +218,14 @@ export const PoolProvider = ({ children }) => {
       maskedName: `${MOCK_USER_PROFILE.name.split(' ')[0]} ${MOCK_USER_PROFILE.name.split(' ')[1]?.[0] || ''}. (You)`,
       avatar: MOCK_USER_PROFILE.avatar,
       badge: MOCK_USER_PROFILE.badge,
-      flightNumber: formData.flightNumber || 'AI-402',
+      flightNumber: formData.flightNumber || 'AI-806',
       luggageTier: formData.luggageTier,
-      luggageDescription: formData.luggageTier === 'heavy_bags' ? '2+ Large Bags' : formData.luggageTier === 'medium_suitcase' ? '1 Suitcase' : 'Backpack only',
+      luggageDescription:
+        formData.luggageTier === 'heavy_bags'
+          ? '2+ Large Bags'
+          : formData.luggageTier === 'medium_suitcase'
+          ? '1 Suitcase'
+          : 'Backpack only',
       units: initialUnits,
       joinedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       paymentStatus: 'pending'
@@ -198,16 +242,16 @@ export const PoolProvider = ({ children }) => {
       destinationAddress: formData.destinationAddress || zone.popularLandmarks[0],
       terminal: formData.terminal || 'T3',
       meetingPoint: getMeetingPointForTerminal(formData.terminal || 'T3'),
-      flightArrivalWindow: `${formData.arrivalTime || '18:45'} ± 30m`,
+      flightArrivalWindow: `${formData.arrivalTime || getDynamicTime(25)} ± 30m`,
       landingTimestamp: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
       status: 'matching',
       maxCapacity: 4,
       currentMembers: [creator],
       vehicleType: vehicleInfo.type,
       vehicleModel: vehicleInfo.model,
-      vehiclePlate: 'DL 05 TC ' + Math.floor(1000 + Math.random() * 9000),
-      driverName: 'Surinder Pal (Airport Fleet Pro)',
-      driverRating: 4.92,
+      vehiclePlate: 'DL 1ZA ' + Math.floor(1000 + Math.random() * 9000),
+      driverName: 'Satish Narang (Verified Commercial Taxi Fleet)',
+      driverRating: 4.91,
       totalBaseFare: baseFare,
       soloTaxiFare: zone.typicalSoloFare,
       currentPerPersonFare: baseFare,
@@ -219,8 +263,10 @@ export const PoolProvider = ({ children }) => {
         {
           id: `msg-${Date.now()}`,
           senderId: 'system',
-          senderName: 'AeroPool Dispatch',
-          text: `Pool initiated by ${creator.name}. Open for co-passengers landing at ${formData.terminal || 'T3'} headed to ${zone.name}.`,
+          senderName: 'AeroPool Airport Dispatch',
+          text: `Pool initiated by ${creator.name}. Open for co-passengers landing at ${
+            formData.terminal || 'T3'
+          } headed to ${zone.name}.`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isSystem: true
         }
@@ -229,7 +275,7 @@ export const PoolProvider = ({ children }) => {
 
     setPools((prev) => [newPool, ...prev]);
     setMyActivePoolId(newPoolId);
-    showToast(`Pool "${newPool.name}" created! Now matching other incoming flyers.`, 'success');
+    showToast(`Pool "${newPool.name}" created! Matching co-flyers now.`, 'success');
     setActiveTab('dashboard');
     return newPoolId;
   };
@@ -242,7 +288,7 @@ export const PoolProvider = ({ children }) => {
         const newStatus = pool.status === 'locked' ? 'matching' : 'locked';
         const msg =
           newStatus === 'locked'
-            ? 'Pool LOCKED! Ride confirmed. Driver dispatched to airport meeting point.'
+            ? 'Pool LOCKED! Commercial cab dispatched to airport pillar meet-up point.'
             : 'Pool UNLOCKED. Now accepting more co-travelers to split fare further.';
 
         return {
@@ -253,7 +299,7 @@ export const PoolProvider = ({ children }) => {
             {
               id: `msg-${Date.now()}`,
               senderId: 'system',
-              senderName: 'AeroPool Dispatch',
+              senderName: 'AeroPool Airport Dispatch',
               text: msg,
               timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
               isSystem: true
@@ -308,13 +354,15 @@ export const PoolProvider = ({ children }) => {
     showToast('Payment status updated!', 'success');
   };
 
-  // Reset to default mock data
-  const resetToMockData = () => {
-    setPools(INITIAL_POOLS);
-    setMyActivePoolId('pool-cyber-1');
-    localStorage.removeItem('aeropool_pools');
-    localStorage.removeItem('aeropool_active_id');
-    showToast('Reset to demo data successfully.', 'info');
+  // Refresh with fresh real-world data & dynamic arrival times
+  const refreshRealWorldData = () => {
+    const fresh = generateRealPools();
+    setPools(fresh);
+    setMyActivePoolId('pool-gurugram-1');
+    localStorage.setItem('aeropool_pools', JSON.stringify(fresh));
+    localStorage.setItem('aeropool_data_version', DATA_VERSION);
+    localStorage.setItem('aeropool_active_id', 'pool-gurugram-1');
+    showToast("Synced today's real-time flights & airport pools.", 'success');
   };
 
   const activePool = pools.find((p) => p.id === myActivePoolId) || pools[0] || null;
@@ -338,7 +386,8 @@ export const PoolProvider = ({ children }) => {
         togglePoolLock,
         sendChatMessage,
         markPaymentSettled,
-        resetToMockData,
+        resetToMockData: refreshRealWorldData,
+        refreshRealWorldData,
         toast,
         showToast,
         closeToast,

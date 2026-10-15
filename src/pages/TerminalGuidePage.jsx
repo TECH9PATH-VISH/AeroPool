@@ -68,6 +68,11 @@ export const TerminalGuidePage = () => {
 
             <h3 className="text-base font-bold text-navy-900">{t.name}</h3>
             <p className="text-xs text-slate-500">{t.gates}</p>
+            {t.airlines && (
+              <p className="text-[11px] text-sky-700 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-100 font-medium">
+                Airlines: {t.airlines}
+              </p>
+            )}
 
             <div className="pt-2 border-t border-slate-100 text-xs space-y-1.5">
               <div className="text-slate-400 font-bold uppercase text-[10px]">Staging Point:</div>

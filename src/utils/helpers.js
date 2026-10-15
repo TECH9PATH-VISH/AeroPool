@@ -1,11 +1,11 @@
-// AeroPool Utility Functions & Calculations
+// AeroPool Utility Functions & Operational Calculations
 
 import { FLIGHT_DATABASE, DESTINATION_ZONES, LUGGAGE_TIERS } from '../data/mockData';
 
 // Currency formatting (supports INR or USD)
 export const formatCurrency = (amount, currency = '₹') => {
   if (currency === '$') {
-    const usd = Math.round(amount / 30);
+    const usd = Math.round(amount / 34); // Realistic INR to USD purchasing power airport cab parity
     return `$${usd}`;
   }
   return `₹${Math.round(amount).toLocaleString('en-IN')}`;
@@ -15,9 +15,11 @@ export const formatCurrency = (amount, currency = '₹') => {
 export const lookupFlight = (query) => {
   if (!query) return null;
   const clean = query.trim().toUpperCase().replace(/\s+/g, '-');
-  return FLIGHT_DATABASE.find(
-    (f) => f.flightNumber.toUpperCase() === clean || f.flightNumber.replace('-', '').toUpperCase() === clean
-  ) || null;
+  return (
+    FLIGHT_DATABASE.find(
+      (f) => f.flightNumber.toUpperCase() === clean || f.flightNumber.replace('-', '').toUpperCase() === clean
+    ) || null
+  );
 };
 
 // Calculate luggage capacity units
@@ -40,7 +42,7 @@ export const determineVehicleType = (members, newLuggageTier = null) => {
   if (hasHeavyLuggage || totalUnits > 3.0 || totalCount > 4) {
     return {
       type: 'SUV',
-      model: 'Toyota Innova Crysta / Ertiga XL',
+      model: 'Toyota Innova Crysta / Ertiga Commercial XL',
       capacityDesc: 'Spacious 6-Seater with 4-5 Bag Trunk Boot',
       totalUnits,
       maxLuggageUnits: 6.0,
@@ -50,11 +52,11 @@ export const determineVehicleType = (members, newLuggageTier = null) => {
 
   return {
     type: 'Sedan',
-    model: 'Toyota Camry / Honda City / Dzire Prime',
-    capacityDesc: '4-Passenger Sedan with standard boot',
+    model: 'Maruti Suzuki Dzire Tour CNG / Tata Tigor EV',
+    capacityDesc: '4-Passenger Commercial Cab with standard boot',
     totalUnits,
     maxLuggageUnits: 3.0,
-    reason: 'Standard luggage volume fits comfortably'
+    reason: 'Standard luggage volume fits comfortably in boot'
   };
 };
 
@@ -65,7 +67,7 @@ export const getCountdownTime = (targetDateIso) => {
   const diff = target - now;
 
   if (diff <= 0) {
-    return { isPast: true, text: 'Landed / Arriving Now' };
+    return { isPast: true, text: 'Arrived / Meet at Pillar' };
   }
 
   const minutes = Math.floor(diff / (1000 * 60));
@@ -96,15 +98,15 @@ export const calculateCO2Saved = (distanceKm, occupantsCount) => {
   return parseFloat(saved.toFixed(1));
 };
 
-// Generate realistic airport meeting pillar
+// Real-world airport meeting points for Indira Gandhi International Airport (DEL)
 export const getMeetingPointForTerminal = (terminalId) => {
   switch (terminalId) {
     case 'T1':
-      return 'Pillar 4, Outside Exit Gate 2 (Terminal 1 Arrivals)';
+      return 'Pillar 4, Outside Arrival Gate B (Commercial Taxi Bay)';
     case 'T2':
-      return 'Pillar 9, Commercial Cab Bay 3 (Terminal 2 Arrivals)';
+      return 'Pillar 6, Commercial Rideshare Pickup Hub (Lane 2)';
     case 'T3':
     default:
-      return 'Pillar 14, Forecourt Lane 3 (Terminal 3 Arrivals)';
+      return 'Pillar 14 - 16, Commercial Forecourt Lane 3 (MLCP Ground Level)';
   }
 };
